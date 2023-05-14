@@ -3,6 +3,7 @@ import axios from 'axios';
 const API_KEY = 'a2131ad5d6a3f97436f48b66c08b88ca';
 const BASE_URL = 'https://api.themoviedb.org/3/';
 const IMG_PLACEHOLDER = 'https://critics.io/img/movies/poster-placeholder.png';
+const IMG_BASE_URL = 'https://image.tmdb.org/t/p/w500/';
 
 export const getTrendingMovies = async () => {
   const url = `${BASE_URL}/trending/movie/day?api_key=${API_KEY}`;
@@ -46,7 +47,7 @@ export const getMovieReviewsById = async id => {
 const fixMovie = movie => {
   let result = Object.assign({}, movie);
   if (result.poster_path)
-    result.poster_path = 'https://image.tmdb.org/t/p/w500' + result.poster_path;
+    result.poster_path = IMG_BASE_URL + result.poster_path;
   else result.poster_path = IMG_PLACEHOLDER;
   result.release_year = !result.release_date
     ? 'Unknown'
@@ -57,8 +58,6 @@ const fixMovie = movie => {
 
 const fixCast = ({ credit_id, name, profile_path, character }) => {
   const newActor = { credit_id, name, character };
-  newActor.path = profile_path
-    ? 'https://image.tmdb.org/t/p/w500' + profile_path
-    : IMG_PLACEHOLDER;
+  newActor.path = profile_path ? IMG_BASE_URL + profile_path : IMG_PLACEHOLDER;
   return newActor;
 };

@@ -1,20 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { getMovieById } from 'services/api-service';
 import {
   useParams,
   Outlet,
   Link,
-  useNavigate,
   useLocation,
+  useNavigate,
 } from 'react-router-dom';
+import { Container } from 'components/App.styled';
 import toast from 'react-hot-toast';
-import { MovieInfo, Img, Wrapper, Title, Caption } from './MovieDetails.styled';
+import {
+  MovieInfo,
+  Img,
+  Wrapper,
+  Title,
+  Caption,
+  BackBtn,
+} from './MovieDetails.styled';
 
-export default function MovieDetails() {
+const MovieDetails = () => {
   const [movieInfo, setMovieInfo] = useState({});
   let { movieId } = useParams();
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     getMovieById(movieId)
@@ -24,13 +32,13 @@ export default function MovieDetails() {
       });
   }, [movieId]);
 
-  const onGoBack = () => {
+  const GoBackBtn = () => {
     navigate(location?.state?.from ?? '/');
   };
 
   return (
-    <>
-      <button onClick={onGoBack}> Go back</button>
+    <Container>
+      <BackBtn onClick={GoBackBtn}> Go back</BackBtn>
       <MovieInfo>
         <div>
           <Img src={movieInfo.poster_path} alt="poster" />
@@ -39,7 +47,8 @@ export default function MovieDetails() {
           <Title>
             {movieInfo.title}({movieInfo.release_year})
           </Title>
-          <p>Vote Average: {`User Score: ${movieInfo.vote_average}`}</p>
+          <Caption>Vote Average</Caption>
+          <p>{`User Score: ${movieInfo.vote_average}`}</p>
           <Caption>Overview</Caption>
           <p>{movieInfo.overview}</p>
           <Caption>Genres</Caption>
@@ -63,7 +72,11 @@ export default function MovieDetails() {
         </ul>
         <hr />
       </div>
-      <Outlet context={movieId} />
-    </>
+      <Suspense>
+        <Outlet context={movieId} />
+      </Suspense>
+    </Container>
   );
-}
+};
+
+export default MovieDetails;

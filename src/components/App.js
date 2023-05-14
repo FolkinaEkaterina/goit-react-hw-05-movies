@@ -1,67 +1,27 @@
-import { lazy, Suspense } from 'react';
-import { Toaster } from 'react-hot-toast';
+import { lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Loader from 'components/Loader/Loader';
-import Navigation from 'components/Navigation/Navigation';
+import { Layout } from './Layout/Layout';
 
-const HomePage = lazy(() => import('components/Home/Home'));
-const MoviesPage = lazy(() => import('components/Movies/Movies'));
-const MovieDetailsPage = lazy(() =>
-  import('components/MovieDetails/MovieDetails')
-);
-const Cast = lazy(() => import('components/Cast/Cast'));
-const Reviews = lazy(() => import('components/Reviews/Reviews'));
+const Home = lazy(() => import('../pages/Home/Home'));
+const Movies = lazy(() => import('../pages/Movies/Movies'));
+const MovieDetails = lazy(() => import('../pages/MovieDetails/MovieDetails'));
+const Cast = lazy(() => import('../pages/Cast/Cast'));
+const Reviews = lazy(() => import('../pages/Reviews/Reviews'));
 
-export default function App() {
+const App = () => {
   return (
-    <>
-      <Navigation />
-
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <Suspense fallback={<Loader />}>
-              <HomePage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="/movies"
-          element={
-            <Suspense fallback={<Loader />}>
-              <MoviesPage />
-            </Suspense>
-          }
-        />
-        <Route
-          path="/movies/:movieId"
-          element={
-            <Suspense fallback={<Loader />}>
-              <MovieDetailsPage />
-            </Suspense>
-          }
-        >
-          <Route
-            path="cast"
-            element={
-              <Suspense fallback={<>...</>}>
-                <Cast />
-              </Suspense>
-            }
-          />
-          <Route
-            path="reviews"
-            element={
-              <Suspense fallback={<>...</>}>
-                <Reviews />
-              </Suspense>
-            }
-          />
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path="movies" element={<Movies />} />
+        <Route path="movies/:movieId" element={<MovieDetails />}>
+          <Route path="cast" element={<Cast />} />
+          <Route path="reviews" element={<Reviews />} />
         </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-      <Toaster />
-    </>
+      </Route>
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
   );
-}
+};
+
+export default App;
